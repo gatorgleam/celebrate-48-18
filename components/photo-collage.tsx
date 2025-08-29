@@ -23,7 +23,7 @@ export function PhotoCollage({ onComplete }: PhotoCollageProps) {
 
   useEffect(() => {
     // Show photos one by one
-    photos.forEach((photo, index) => {
+    photos.forEach((photo) => {
       setTimeout(() => {
         setVisiblePhotos((prev) => [...prev, photo.id])
       }, photo.delay)
@@ -34,7 +34,7 @@ export function PhotoCollage({ onComplete }: PhotoCollageProps) {
 
     // Complete after 7 seconds
     setTimeout(() => onComplete(), 7000)
-  }, [onComplete])
+  }, [onComplete, photos])
 
   return (
     <div className="fixed inset-0 bg-gradient-to-br from-black via-gray-900 to-black overflow-hidden">
@@ -87,7 +87,7 @@ export function PhotoCollage({ onComplete }: PhotoCollageProps) {
         <div className="absolute inset-0 flex flex-col items-center justify-center z-20">
           <div className="text-center space-y-8">
             <h1 className="text-6xl md:text-8xl font-script text-yellow-400 text-shadow-glow animate-pulse">
-              You're Invited To
+              You&apos;re Invited To
             </h1>
             <h2 className="text-7xl md:text-9xl font-script text-white text-shadow-glow animate-bounce">
               Celebrate 48

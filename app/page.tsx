@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 
@@ -10,7 +10,7 @@ export default function BirthdayInvite() {
   const [showPause, setShowPause] = useState(false)
   const [showInvite, setShowInvite] = useState(false)
 
-  const mediaItems = [
+  const mediaItems = useMemo(() => [
     { id: 1, type: "image", src: "/photos/mom-1.jpg", alt: "Sarah Beth memory 1" },
     { id: 2, type: "video", src: "/videos/mom-video-1.mp4", alt: "Sarah Beth video 1" },
     { id: 3, type: "image", src: "/photos/mom-2.jpg", alt: "Sarah Beth memory 2" },
@@ -23,14 +23,14 @@ export default function BirthdayInvite() {
     { id: 10, type: "image", src: "/photos/mom-7.jpg", alt: "Sarah Beth memory 7" },
     { id: 11, type: "image", src: "/photos/mom-8.jpg", alt: "Sarah Beth memory 8" },
     { id: 12, type: "image", src: "/photos/mom-9.jpg", alt: "Sarah Beth memory 9" },
-  ]
+  ], [])
 
   // Shuffle media once on mount so the collage order varies per load
   const [shuffledItems, setShuffledItems] = useState(mediaItems)
   useEffect(() => {
     const shuffled = [...mediaItems].sort(() => Math.random() - 0.5)
     setShuffledItems(shuffled)
-  }, [])
+  }, [mediaItems])
 
   useEffect(() => {
     const photoTimer = setInterval(() => {
@@ -101,7 +101,7 @@ export default function BirthdayInvite() {
       {/* Photo/Video Collage Grid */}
       {!showInvite && (
         <div className="absolute inset-0 p-4 sm:p-6 md:p-8">
-          <div className="grid grid-cols-4 grid-rows-3 gap-2 sm:gap-3 md:gap-4 h-full overflow-visible">
+          <div className="grid grid-cols-2 grid-rows-6 md:grid-cols-4 md:grid-rows-3 gap-1 sm:gap-2 md:gap-4 h-full overflow-visible">
             {shuffledItems.map((item, index) => (
               <div
                 key={item.id}
@@ -125,11 +125,14 @@ export default function BirthdayInvite() {
                       </div>
                     </video>
                   ) : (
-                    <img
-                      src={item.src || "/placeholder.svg"}
-                      alt={item.alt}
-                      className="w-full h-full object-contain rounded-none bg-black/10"
-                    />
+                    <>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={item.src || "/placeholder.svg"}
+                        alt={item.alt}
+                        className="w-full h-full object-contain rounded-none bg-black/10"
+                      />
+                    </>
                   )}
                 </Card>
               </div>
@@ -141,12 +144,12 @@ export default function BirthdayInvite() {
       {/* Animated Text Overlays */}
       {showAnimatedText && !showInvite && (
         <div className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none">
-          <div className="bg-white/85 rounded-3xl px-10 py-8 shadow-2xl">
+          <div className="bg-white/85 rounded-3xl px-6 py-6 sm:px-8 sm:py-8 md:px-10 md:py-8 shadow-2xl">
             <div className="text-center space-y-8">
-              <h1 className="text-8xl font-bold text-transparent bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text animate-pulse text-shadow-glow-blue">
-                You're Invited To
-              </h1>
-              <h2 className="text-9xl font-bold text-transparent bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text animate-bounce text-shadow-glow-purple">
+                              <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold text-transparent bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text animate-pulse text-shadow-glow-blue">
+                You&apos;re Invited To
+                </h1>
+              <h2 className="text-5xl sm:text-7xl md:text-9xl font-bold text-transparent bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text animate-bounce text-shadow-glow-purple">
                 Celebrate 48
               </h2>
             </div>
@@ -156,11 +159,11 @@ export default function BirthdayInvite() {
 
       {showPause && !showInvite && (
         <div className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none">
-          <div className="text-center space-y-6 bg-black/80 backdrop-blur-sm rounded-3xl p-12">
-            <h1 className="text-7xl font-bold text-transparent bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text animate-pulse">
+          <div className="text-center space-y-6 bg-black/80 backdrop-blur-sm rounded-3xl p-6 sm:p-8 md:p-12">
+            <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold text-transparent bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text animate-pulse">
               Get Ready! 🎉
             </h1>
-            <div className="flex justify-center space-x-4 text-4xl">
+            <div className="flex justify-center space-x-4 text-3xl sm:text-4xl">
               <span className="animate-bounce">🎵</span>
               <span className="animate-bounce" style={{ animationDelay: "0.2s" }}>
                 🍷
@@ -179,7 +182,7 @@ export default function BirthdayInvite() {
       {/* Main Invitation */}
       {showInvite && (
         <div className="absolute inset-0 flex items-center justify-center animate-fade-in bg-gradient-to-br from-slate-900 via-purple-900 to-blue-900">
-          <Card className="relative max-w-4xl mx-4 p-12 rounded-3xl overflow-hidden border-[3px] border-amber-300/60 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
+          <Card className="relative max-w-4xl mx-4 p-6 sm:p-8 md:p-12 rounded-3xl overflow-hidden border-[3px] border-amber-300/60 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
             {/* Card video background with white overlay */}
             <video
               className="absolute inset-0 w-full h-full object-cover"
@@ -194,7 +197,7 @@ export default function BirthdayInvite() {
 
             <div className="relative z-10 text-center space-y-8">
               {/* Decorative elements */}
-              <div className="flex justify-center space-x-6 text-5xl">
+              <div className="flex justify-center space-x-6 text-3xl sm:text-4xl md:text-5xl">
                 <span className="animate-bounce">🎉</span>
                 <span className="animate-bounce delay-100">🎂</span>
                 <span className="animate-bounce delay-200">🎵</span>
@@ -204,18 +207,18 @@ export default function BirthdayInvite() {
 
               {/* Main title */}
               <div className="space-y-4">
-                <h1 className="text-8xl font-bold text-transparent bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-balance animate-pulse">
+                <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold text-transparent bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-balance animate-pulse">
                   Celebrate 48
                 </h1>
-                <h2 className="text-5xl font-semibold text-black text-balance animate-bounce bg-gradient-to-r from-purple-500/15 to-blue-500/15 rounded-full py-4 px-8">
-                  Sarah Beth's Birthday Bash
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold text-black text-balance animate-bounce bg-gradient-to-r from-purple-500/15 to-blue-500/15 rounded-full py-4 px-8">
+                  Sarah Beth&apos;s Birthday Bash
                 </h2>
-                <p className="text-2xl text-blue-400 italic">Music, Drinks & Memories! 🎵🍷</p>
+                <p className="text-lg sm:text-xl md:text-2xl text-blue-400 italic">Music, Drinks & Memories! 🎵🍷</p>
               </div>
 
               {/* Event details in responsive grid */}
-              <div className="grid md:grid-cols-3 gap-6 text-xl">
-                <Card className="bg-gradient-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-sm border-blue-400/30 p-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 text-base sm:text-lg md:text-xl">
+                <Card className="bg-gradient-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-sm border-blue-400/30 p-4 sm:p-5 md:p-6">
                   <div className="text-center space-y-3">
                     <p className="font-bold text-blue-500 text-2xl">📅 When</p>
                     <p className="text-black text-xl">Friday, September 26th</p>
@@ -223,7 +226,7 @@ export default function BirthdayInvite() {
                   </div>
                 </Card>
 
-                <Card className="bg-gradient-to-br from-purple-500/20 to-blue-500/20 backdrop-blur-sm border-purple-400/30 p-6">
+                <Card className="bg-gradient-to-br from-purple-500/20 to-blue-500/20 backdrop-blur-sm border-purple-400/30 p-4 sm:p-5 md:p-6">
                   <div className="text-center space-y-3">
                     <p className="font-bold text-purple-500 text-2xl">📍 Where</p>
                     <p className="text-black text-xl">Lake Geneva</p>
@@ -231,7 +234,7 @@ export default function BirthdayInvite() {
                   </div>
                 </Card>
 
-                <Card className="bg-gradient-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-sm border-blue-400/30 p-6">
+                <Card className="bg-gradient-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-sm border-blue-400/30 p-4 sm:p-5 md:p-6">
                   <div className="text-center space-y-3">
                     <p className="font-bold text-blue-500 text-2xl">📞 RSVP</p>
                     <p className="text-black text-xl">Call or text Abby</p>
@@ -244,7 +247,7 @@ export default function BirthdayInvite() {
               <div className="pt-6">
                 <Button
                   size="lg"
-                  className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold px-12 py-4 text-2xl rounded-full shadow-lg transform hover:scale-105 transition-all"
+                  className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold px-8 py-3 text-xl sm:px-10 sm:py-4 sm:text-2xl rounded-full shadow-lg transform hover:scale-105 transition-all"
                   onClick={() => window.open("tel:+12622102921")}
                 >
                   RSVP Now! 🎉
@@ -253,7 +256,7 @@ export default function BirthdayInvite() {
 
               {/* Decorative footer */}
               <div className="pt-6 text-center">
-                <p className="text-blue-400 italic text-xl">{"Let's make this birthday unforgettable! 🎈✨"}</p>
+                <p className="text-blue-400 italic text-base sm:text-lg">Let&apos;s make this birthday unforgettable! 🎈✨</p>
               </div>
             </div>
           </Card>

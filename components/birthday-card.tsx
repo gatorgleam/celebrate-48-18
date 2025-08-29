@@ -45,12 +45,12 @@ export function BirthdayCard() {
           {/* Main title */}
           <div className="space-y-4">
             <Badge variant="outline" className="text-lg px-6 py-2 bg-yellow-50 border-yellow-400 text-yellow-800">
-              You're Invited To
+              You&apos;re Invited To
             </Badge>
             <h1 className="text-6xl md:text-7xl font-script text-yellow-600 text-shadow-glow leading-tight">
               Celebrate 48
             </h1>
-            <h2 className="text-3xl md:text-4xl font-serif text-gray-800 font-bold">Sarah Beth's Birthday Bash</h2>
+            <h2 className="text-3xl md:text-4xl font-serif text-gray-800 font-bold">Sarah Beth&apos;s Birthday Bash</h2>
             <p className="text-xl text-gray-600 font-medium">Music, Drinks & Memories! 🎶🥂</p>
           </div>
 
@@ -102,7 +102,7 @@ export function BirthdayCard() {
 
           {/* Footer message */}
           <div className="pt-6 border-t border-yellow-200">
-            <p className="text-gray-600 font-serif italic text-lg">Let's make this birthday unforgettable! ✨</p>
+            <p className="text-gray-600 font-serif italic text-lg">Let&apos;s make this birthday unforgettable! ✨</p>
           </div>
         </div>
       </Card>
