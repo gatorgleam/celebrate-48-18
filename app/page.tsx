@@ -5,291 +5,255 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 
 export default function BirthdayInvite() {
-  const [showCollage, setShowCollage] = useState(true)
-  const [currentItemIndex, setCurrentItemIndex] = useState(0)
+  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0)
   const [showAnimatedText, setShowAnimatedText] = useState(false)
   const [showPause, setShowPause] = useState(false)
   const [showInvite, setShowInvite] = useState(false)
-  const [showPhotos, setShowPhotos] = useState(true)
-  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0)
 
-  // 12 items total: 9 photos + 3 videos (randomly placed)
   const mediaItems = [
-    { id: 1, type: "photo", src: "/photos/mom-photo-1.jpg", alt: "Sarah Beth memory 1" },
+    { id: 1, type: "image", src: "/photos/mom-1.jpg", alt: "Sarah Beth memory 1" },
     { id: 2, type: "video", src: "/videos/mom-video-1.mp4", alt: "Sarah Beth video 1" },
-    { id: 3, type: "photo", src: "/photos/mom-photo-2.jpg", alt: "Sarah Beth memory 2" },
-    { id: 4, type: "photo", src: "/photos/mom-photo-3.jpg", alt: "Sarah Beth memory 3" },
-    { id: 5, type: "photo", src: "/photos/mom-photo-4.jpg", alt: "Sarah Beth memory 4" },
-    { id: 6, type: "video", src: "/videos/mom-video-2.mp4", alt: "Sarah Beth video 2" },
-    { id: 7, type: "photo", src: "/photos/mom-photo-5.jpg", alt: "Sarah Beth memory 5" },
-    { id: 8, type: "photo", src: "/photos/mom-photo-6.jpg", alt: "Sarah Beth memory 6" },
-    { id: 9, type: "photo", src: "/photos/mom-photo-7.jpg", alt: "Sarah Beth memory 7" },
-    { id: 10, type: "video", src: "/videos/mom-video-3.mp4", alt: "Sarah Beth video 3" },
-    { id: 11, type: "photo", src: "/photos/mom-photo-8.jpg", alt: "Sarah Beth memory 8" },
-    { id: 12, type: "photo", src: "/photos/mom-photo-9.jpg", alt: "Sarah Beth memory 9" },
+    { id: 3, type: "image", src: "/photos/mom-2.jpg", alt: "Sarah Beth memory 2" },
+    { id: 4, type: "image", src: "/photos/mom-3.jpg", alt: "Sarah Beth memory 3" },
+    { id: 5, type: "video", src: "/videos/mom-video-2.mp4", alt: "Sarah Beth video 2" },
+    { id: 6, type: "image", src: "/photos/mom-4.jpg", alt: "Sarah Beth memory 4" },
+    { id: 7, type: "image", src: "/photos/mom-5.jpg", alt: "Sarah Beth memory 5" },
+    { id: 8, type: "image", src: "/photos/mom-6.jpg", alt: "Sarah Beth memory 6" },
+    { id: 9, type: "video", src: "/videos/mom-video-3.mp4", alt: "Sarah Beth video 3" },
+    { id: 10, type: "image", src: "/photos/mom-7.jpg", alt: "Sarah Beth memory 7" },
+    { id: 11, type: "image", src: "/photos/mom-8.jpg", alt: "Sarah Beth memory 8" },
+    { id: 12, type: "image", src: "/photos/mom-9.jpg", alt: "Sarah Beth memory 9" },
   ]
 
-  const placeholderPhotos = [
-    { id: 1, src: "/photos/placeholder-1.jpg" },
-    { id: 2, src: "/photos/placeholder-2.jpg" },
-    { id: 3, src: "/photos/placeholder-3.jpg" },
-    { id: 4, src: "/photos/placeholder-4.jpg" },
-    { id: 5, src: "/photos/placeholder-5.jpg" },
-    { id: 6, src: "/photos/placeholder-6.jpg" },
-    { id: 7, src: "/photos/placeholder-7.jpg" },
-    { id: 8, src: "/photos/placeholder-8.jpg" },
-    { id: 9, src: "/photos/placeholder-9.jpg" },
-  ]
+  // Shuffle media once on mount so the collage order varies per load
+  const [shuffledItems, setShuffledItems] = useState(mediaItems)
+  useEffect(() => {
+    const shuffled = [...mediaItems].sort(() => Math.random() - 0.5)
+    setShuffledItems(shuffled)
+  }, [])
 
   useEffect(() => {
-    if (showCollage) {
-      const timer = setInterval(() => {
-        setCurrentItemIndex((prev) => {
-          if (prev < mediaItems.length - 1) {
-            return prev + 1
-          } else {
-            // All items shown, show animated text
-            setTimeout(() => setShowAnimatedText(true), 500)
-            // Then show pause screen
-            setTimeout(() => setShowPause(true), 2500)
-            // Finally show invite
-            setTimeout(() => {
-              setShowCollage(false)
-              setShowInvite(true)
-            }, 5500) // 3 second pause
-            return prev
-          }
-        })
-      }, 600) // Fast animation - 600ms per item
+    const photoTimer = setInterval(() => {
+      setCurrentPhotoIndex((prev) => {
+        if (prev < shuffledItems.length - 1) {
+          return prev + 1
+        } else {
+          clearInterval(photoTimer)
+          setTimeout(() => setShowAnimatedText(true), 500)
+          return prev
+        }
+      })
+    }, 300)
 
-      return () => clearInterval(timer)
+    return () => clearInterval(photoTimer)
+  }, [shuffledItems.length])
+
+  useEffect(() => {
+    if (showAnimatedText) {
+      setTimeout(() => {
+        setShowPause(true)
+      }, 4500)
     }
+  }, [showAnimatedText])
 
-    if (showPhotos) {
-      const photoTimer = setInterval(() => {
-        setCurrentPhotoIndex((prev) => {
-          if (prev < placeholderPhotos.length - 1) {
-            return prev + 1
-          } else {
-            // All photos shown, show invite
-            setTimeout(() => {
-              setShowPhotos(false)
-              setShowInvite(true)
-            }, 3000) // 3 second pause
-            return prev
-          }
-        })
-      }, 1000) // Slower animation - 1000ms per photo
-
-      return () => clearInterval(photoTimer)
+  useEffect(() => {
+    if (showPause) {
+      setTimeout(() => {
+        setShowInvite(true)
+      }, 3000)
     }
-  }, [showCollage, showPhotos, mediaItems.length, placeholderPhotos.length])
+  }, [showPause])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-blue-900 overflow-hidden relative">
-      {/* Floating drink and music emojis */}
+      {/* Floating background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-10 left-10 text-4xl opacity-30 animate-float">🍷</div>
-        <div className="absolute top-20 right-20 text-3xl opacity-25 animate-float delay-1000">🎵</div>
-        <div className="absolute bottom-20 left-20 text-3xl opacity-20 animate-float delay-2000">🥂</div>
-        <div className="absolute bottom-10 right-10 text-4xl opacity-30 animate-float delay-3000">🎶</div>
-        <div className="absolute top-1/2 left-1/4 text-2xl opacity-15 animate-float delay-4000">🍸</div>
-        <div className="absolute top-1/3 right-1/3 text-3xl opacity-25 animate-float delay-5000">🎼</div>
-
-        <div className="absolute top-1/4 left-1/2 w-2 h-2 bg-blue-300 rounded-full animate-pulse opacity-60"></div>
-        <div className="absolute top-3/4 right-1/4 w-3 h-3 bg-purple-300 rounded-full animate-pulse delay-1000 opacity-50"></div>
-        <div className="absolute bottom-1/3 left-1/3 w-1 h-1 bg-white rounded-full animate-pulse delay-2000 opacity-70"></div>
+        <div className="absolute top-10 left-10 text-4xl animate-floating opacity-30">🎵</div>
+        <div className="absolute top-20 right-20 text-3xl animate-floating opacity-25" style={{ animationDelay: "1s" }}>
+          🍷
+        </div>
+        <div
+          className="absolute bottom-20 left-20 text-3xl animate-floating opacity-30"
+          style={{ animationDelay: "2s" }}
+        >
+          🎶
+        </div>
+        <div
+          className="absolute bottom-10 right-10 text-4xl animate-floating opacity-25"
+          style={{ animationDelay: "0.5s" }}
+        >
+          🥂
+        </div>
+        <div
+          className="absolute top-1/2 left-1/4 text-2xl animate-floating opacity-20"
+          style={{ animationDelay: "1.5s" }}
+        >
+          🎸
+        </div>
+        <div
+          className="absolute top-1/3 right-1/3 text-3xl animate-floating opacity-25"
+          style={{ animationDelay: "2.5s" }}
+        >
+          🍸
+        </div>
       </div>
 
-      {/* Elegant overlay with subtle pattern and gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-black/20 via-purple-500/10 to-blue-500/20"></div>
-      <div
-        className="absolute inset-0 opacity-5"
-        style={{
-          backgroundImage: `radial-gradient(circle at 25% 25%, white 2px, transparent 2px),
-                         radial-gradient(circle at 75% 75%, white 2px, transparent 2px)`,
-          backgroundSize: "50px 50px",
-        }}
-      ></div>
-
-      {/* Fast Photo/Video Collage */}
-      {showCollage && (
-        <div className="absolute inset-0">
-          <div className="grid grid-cols-4 gap-4 p-8 h-full">
-            {mediaItems.map((item, index) => (
+      {/* Photo/Video Collage Grid */}
+      {!showInvite && (
+        <div className="absolute inset-0 p-4 sm:p-6 md:p-8">
+          <div className="grid grid-cols-4 grid-rows-3 gap-2 sm:gap-3 md:gap-4 h-full overflow-visible">
+            {shuffledItems.map((item, index) => (
               <div
                 key={item.id}
-                className={`relative transition-all duration-500 transform ${
-                  index <= currentItemIndex ? "opacity-100 scale-100 rotate-0" : "opacity-0 scale-75 rotate-12"
-                } ${index < currentItemIndex ? "animate-pulse" : ""}`}
+                className={`relative transition-all duration-500 ${
+                  index <= currentPhotoIndex ? "opacity-100" : "opacity-0"
+                } -m-1 md:-m-2`}
                 style={{
-                  animationDelay: `${index * 100}ms`,
+                  zIndex: 10 + index,
+                  transform: `rotate(${index % 3 === 0 ? 0 : ((index * 7) % 15) - 7}deg) scale(${index <= currentPhotoIndex ? 1.06 + ((index % 4) * 0.01) : 0.96})`,
                 }}
               >
-                <div className="relative group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-purple-600/20 rounded-xl blur-sm group-hover:blur-none transition-all duration-300"></div>
-                  <Card className="relative p-2 bg-gradient-to-br from-white/10 to-white/5 border border-white/20 shadow-2xl backdrop-blur-sm rounded-xl overflow-hidden">
-                    {item.type === "video" ? (
-                      <video
-                        className="w-full h-32 object-cover rounded-lg"
-                        src={item.src}
-                        muted
-                        autoPlay
-                        loop
-                        playsInline
-                      />
-                    ) : (
-                      <div className="w-full h-32 bg-gradient-to-br from-blue-200/20 to-purple-200/20 rounded-lg flex items-center justify-center border border-white/10">
-                        <div className="text-center text-white/80">
-                          <div className="text-2xl mb-1">📸</div>
-                          <p className="text-xs font-medium">Photo {item.id}</p>
+                <Card className="h-full bg-white/10 backdrop-blur-sm border-2 border-blue-400/30 shadow-xl overflow-hidden flex items-center justify-center p-0">
+                  {item.type === "video" ? (
+                    <video className="w-full h-full object-contain rounded-none bg-black/20" autoPlay muted loop playsInline>
+                      <source src={item.src} type="video/mp4" />
+                      <div className="w-full h-full bg-purple-200 flex items-center justify-center">
+                        <div className="text-center text-purple-800">
+                          <div className="text-4xl mb-2">🎥</div>
+                          <p className="text-sm font-medium">Video {item.id}</p>
                         </div>
                       </div>
-                    )}
-                    <div className="absolute -top-1 left-4 w-8 h-4 bg-white/20 rounded-sm rotate-12 shadow-sm"></div>
-                  </Card>
-                </div>
+                    </video>
+                  ) : (
+                    <img
+                      src={item.src || "/placeholder.svg"}
+                      alt={item.alt}
+                      className="w-full h-full object-contain rounded-none bg-black/10"
+                    />
+                  )}
+                </Card>
               </div>
             ))}
           </div>
-
-          {showAnimatedText && (
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="text-center space-y-8">
-                <h1 className="text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-purple-300 to-blue-300 animate-pulse text-shadow-glow-blue font-serif">
-                  You're Invited To
-                </h1>
-                <h2 className="text-9xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-blue-300 to-purple-300 animate-bounce text-shadow-glow-purple font-serif">
-                  Celebrate 48
-                </h2>
-              </div>
-            </div>
-          )}
-
-          {showPause && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm">
-              <div className="text-center space-y-6 p-8 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/20 shadow-2xl backdrop-blur-md">
-                <div className="text-6xl animate-bounce">🎉</div>
-                <h3 className="text-5xl font-bold text-white text-shadow-glow-blue animate-pulse">Get Ready!</h3>
-                <div className="flex justify-center space-x-4 text-3xl">
-                  <span className="animate-bounce">🎂</span>
-                  <span className="animate-bounce delay-200">🎵</span>
-                  <span className="animate-bounce delay-400">🍷</span>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       )}
 
-      {/* Scrapbook Photo Animation */}
-      {showPhotos && (
-        <div className="absolute inset-0 flex items-center justify-center z-10">
-          {placeholderPhotos.map((photo, index) => (
-            <div
-              key={photo.id}
-              className={`absolute transition-all duration-1000 transform ${
-                index <= currentPhotoIndex ? "opacity-100 scale-100" : "opacity-0 scale-95"
-              } ${
-                index < currentPhotoIndex
-                  ? "animate-fade-out-up"
-                  : index === currentPhotoIndex
-                    ? "animate-bounce-in"
-                    : ""
-              }`}
-              style={{
-                transform: `rotate(${(index - 2) * 5}deg) translate(${(index - 2) * 20}px, ${(index - 2) * 10}px)`,
-                zIndex: placeholderPhotos.length - index,
-              }}
-            >
-              <Card className="p-4 bg-white/95 backdrop-blur-sm border-2 border-purple-200 shadow-xl">
-                <div className="w-64 h-64 bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg flex items-center justify-center border-2 border-dashed border-purple-300">
-                  <div className="text-center text-purple-600">
-                    <div className="text-4xl mb-2">📸</div>
-                    <p className="text-sm font-medium">Photo Placeholder {photo.id}</p>
-                    <p className="text-xs mt-1">Replace with Sarah Beth's photo</p>
-                  </div>
-                </div>
-                <div className="mt-2 text-center">
-                  <div className="w-16 h-4 bg-purple-200 rounded-full mx-auto opacity-60"></div>
-                </div>
-              </Card>
+      {/* Animated Text Overlays */}
+      {showAnimatedText && !showInvite && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none">
+          <div className="bg-white/85 rounded-3xl px-10 py-8 shadow-2xl">
+            <div className="text-center space-y-8">
+              <h1 className="text-8xl font-bold text-transparent bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text animate-pulse text-shadow-glow-blue">
+                You're Invited To
+              </h1>
+              <h2 className="text-9xl font-bold text-transparent bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text animate-bounce text-shadow-glow-purple">
+                Celebrate 48
+              </h2>
             </div>
-          ))}
+          </div>
+        </div>
+      )}
+
+      {showPause && !showInvite && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none">
+          <div className="text-center space-y-6 bg-black/80 backdrop-blur-sm rounded-3xl p-12">
+            <h1 className="text-7xl font-bold text-transparent bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text animate-pulse">
+              Get Ready! 🎉
+            </h1>
+            <div className="flex justify-center space-x-4 text-4xl">
+              <span className="animate-bounce">🎵</span>
+              <span className="animate-bounce" style={{ animationDelay: "0.2s" }}>
+                🍷
+              </span>
+              <span className="animate-bounce" style={{ animationDelay: "0.4s" }}>
+                🎂
+              </span>
+              <span className="animate-bounce" style={{ animationDelay: "0.6s" }}>
+                🎉
+              </span>
+            </div>
+          </div>
         </div>
       )}
 
       {/* Main Invitation */}
       {showInvite && (
-        <div className="absolute inset-0 flex items-center justify-center animate-fade-in z-10">
-          <Card className="max-w-2xl mx-4 p-8 bg-white/95 backdrop-blur-md border-2 border-purple-300 shadow-2xl transform rotate-1">
-            <div className="relative text-center space-y-8">
-              <div className="flex justify-center space-x-6 text-5xl mb-8">
-                <span className="animate-bounce text-blue-500">🎉</span>
-                <span className="animate-bounce delay-100 text-purple-500">🎂</span>
-                <span className="animate-bounce delay-200 text-blue-600">🎵</span>
-                <span className="animate-bounce delay-300 text-purple-600">🍷</span>
-                <span className="animate-bounce delay-400 text-blue-500">🎉</span>
+        <div className="absolute inset-0 flex items-center justify-center animate-fade-in bg-gradient-to-br from-slate-900 via-purple-900 to-blue-900">
+          <Card className="relative max-w-4xl mx-4 p-12 rounded-3xl overflow-hidden border-[3px] border-amber-300/60 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
+            {/* Card video background with white overlay */}
+            <video
+              className="absolute inset-0 w-full h-full object-cover"
+              src="/videos/mom-video-2.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              aria-hidden
+            />
+            <div className="absolute inset-0 bg-white/85" />
+
+            <div className="relative z-10 text-center space-y-8">
+              {/* Decorative elements */}
+              <div className="flex justify-center space-x-6 text-5xl">
+                <span className="animate-bounce">🎉</span>
+                <span className="animate-bounce delay-100">🎂</span>
+                <span className="animate-bounce delay-200">🎵</span>
+                <span className="animate-bounce delay-300">🍷</span>
+                <span className="animate-bounce delay-400">🎉</span>
               </div>
 
+              {/* Main title */}
               <div className="space-y-4">
-                <h1 className="text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 animate-pulse font-serif leading-tight">
+                <h1 className="text-8xl font-bold text-transparent bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-balance animate-pulse">
                   Celebrate 48
                 </h1>
-                <h2 className="text-5xl font-bold text-gray-800 animate-bounce bg-gradient-to-r from-purple-100 to-blue-100 px-8 py-4 rounded-2xl shadow-lg font-serif">
+                <h2 className="text-5xl font-semibold text-black text-balance animate-bounce bg-gradient-to-r from-purple-500/15 to-blue-500/15 rounded-full py-4 px-8">
                   Sarah Beth's Birthday Bash
                 </h2>
-                <p className="text-2xl text-purple-700 italic font-medium">Music, Drinks & Memories! 🎶🍾</p>
+                <p className="text-2xl text-blue-400 italic">Music, Drinks & Memories! 🎵🍷</p>
               </div>
 
+              {/* Event details in responsive grid */}
               <div className="grid md:grid-cols-3 gap-6 text-xl">
-                <Card className="p-6 bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-200 shadow-xl rounded-2xl transform hover:scale-105 transition-all duration-300">
+                <Card className="bg-gradient-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-sm border-blue-400/30 p-6">
                   <div className="text-center space-y-3">
-                    <div className="text-4xl">📅</div>
-                    <h3 className="text-2xl font-bold text-blue-700">When</h3>
-                    <p className="text-xl font-semibold text-gray-800">Friday, September 26th</p>
-                    <p className="text-xl font-semibold text-gray-800">7:00 PM</p>
+                    <p className="font-bold text-blue-500 text-2xl">📅 When</p>
+                    <p className="text-black text-xl">Friday, September 26th</p>
+                    <p className="text-black text-xl">7:00 PM</p>
                   </div>
                 </Card>
 
-                <Card className="p-6 bg-gradient-to-br from-purple-50 to-blue-50 border-2 border-purple-200 shadow-xl rounded-2xl transform hover:scale-105 transition-all duration-300">
+                <Card className="bg-gradient-to-br from-purple-500/20 to-blue-500/20 backdrop-blur-sm border-purple-400/30 p-6">
                   <div className="text-center space-y-3">
-                    <div className="text-4xl">🎵</div>
-                    <h3 className="text-2xl font-bold text-purple-700">Where</h3>
-                    <p className="text-xl font-semibold text-gray-800">Lake Geneva</p>
-                    <p className="text-xl font-semibold text-gray-800">House of Music</p>
+                    <p className="font-bold text-purple-500 text-2xl">📍 Where</p>
+                    <p className="text-black text-xl">Lake Geneva</p>
+                    <p className="text-black text-xl">House of Music 🎵</p>
                   </div>
                 </Card>
 
-                <Card className="p-6 bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-200 shadow-xl rounded-2xl transform hover:scale-105 transition-all duration-300">
+                <Card className="bg-gradient-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-sm border-blue-400/30 p-6">
                   <div className="text-center space-y-3">
-                    <div className="text-4xl">📞</div>
-                    <h3 className="text-2xl font-bold text-blue-700">RSVP</h3>
-                    <p className="text-xl font-semibold text-gray-800">Call or text Abby</p>
-                    <p className="text-xl font-mono font-bold text-purple-700">(262) 210-2921</p>
+                    <p className="font-bold text-blue-500 text-2xl">📞 RSVP</p>
+                    <p className="text-black text-xl">Call or text Abby</p>
+                    <p className="text-black text-xl font-mono">(262) 210-2921</p>
                   </div>
                 </Card>
               </div>
 
+              {/* Call to action */}
               <div className="pt-6">
                 <Button
                   size="lg"
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold px-12 py-6 text-2xl rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-300 border-2 border-white/20"
+                  className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold px-12 py-4 text-2xl rounded-full shadow-lg transform hover:scale-105 transition-all"
                   onClick={() => window.open("tel:+12622102921")}
                 >
-                  RSVP Now! 🎉✨
+                  RSVP Now! 🎉
                 </Button>
               </div>
 
-              <div className="pt-8 space-y-4">
-                <div className="flex justify-center space-x-4 text-3xl">
-                  <span className="animate-pulse">🎈</span>
-                  <span className="animate-pulse delay-500">✨</span>
-                  <span className="animate-pulse delay-1000">🎈</span>
-                </div>
-                <p className="text-xl text-purple-700 italic font-medium bg-gradient-to-r from-blue-100 to-purple-100 px-6 py-3 rounded-xl">
-                  {"Let's make this birthday absolutely magical! 🌟"}
-                </p>
+              {/* Decorative footer */}
+              <div className="pt-6 text-center">
+                <p className="text-blue-400 italic text-xl">{"Let's make this birthday unforgettable! 🎈✨"}</p>
               </div>
             </div>
           </Card>
@@ -297,29 +261,12 @@ export default function BirthdayInvite() {
       )}
 
       {/* Skip animation button */}
-      {showCollage && (
-        <Button
-          variant="outline"
-          size="lg"
-          className="absolute bottom-6 right-6 bg-white/20 backdrop-blur-md border-white/30 text-white hover:bg-white/30 text-lg px-6 py-3 rounded-xl shadow-xl"
-          onClick={() => {
-            setShowCollage(false)
-            setShowInvite(true)
-          }}
-        >
-          Skip Animation ⏭️
-        </Button>
-      )}
-
-      {showPhotos && (
+      {!showInvite && (
         <Button
           variant="outline"
           size="sm"
-          className="absolute bottom-4 right-4 bg-white/80 backdrop-blur-sm border-purple-200 text-purple-700 hover:bg-purple-50 z-20"
-          onClick={() => {
-            setShowPhotos(false)
-            setShowInvite(true)
-          }}
+          className="absolute bottom-4 right-4 bg-white/10 backdrop-blur-sm border-blue-400/30 text-slate-200 hover:bg-white/20"
+          onClick={() => setShowInvite(true)}
         >
           Skip Animation
         </Button>
