@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 
 export default function BirthdayInvite() {
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0)
@@ -66,75 +67,52 @@ export default function BirthdayInvite() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-blue-900 overflow-hidden relative">
-      {/* Floating background elements */}
+      {/* Subtle animated gradient blobs background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-10 left-10 text-4xl animate-floating opacity-30">🎵</div>
-        <div className="absolute top-20 right-20 text-3xl animate-floating opacity-25" style={{ animationDelay: "1s" }}>
-          🍷
-        </div>
-        <div
-          className="absolute bottom-20 left-20 text-3xl animate-floating opacity-30"
-          style={{ animationDelay: "2s" }}
-        >
-          🎶
-        </div>
-        <div
-          className="absolute bottom-10 right-10 text-4xl animate-floating opacity-25"
-          style={{ animationDelay: "0.5s" }}
-        >
-          🥂
-        </div>
-        <div
-          className="absolute top-1/2 left-1/4 text-2xl animate-floating opacity-20"
-          style={{ animationDelay: "1.5s" }}
-        >
-          🎸
-        </div>
-        <div
-          className="absolute top-1/3 right-1/3 text-3xl animate-floating opacity-25"
-          style={{ animationDelay: "2.5s" }}
-        >
-          🍸
-        </div>
+        <div className="absolute -top-20 -left-20 size-72 rounded-full bg-gradient-to-br from-purple-600/25 to-blue-500/25 blur-3xl animate-float" />
+        <div className="absolute top-1/4 -right-24 size-80 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-600/20 blur-3xl animate-float" style={{ animationDelay: "1.2s" }} />
+        <div className="absolute bottom-0 left-1/3 size-64 rounded-full bg-gradient-to-br from-indigo-500/20 to-fuchsia-500/20 blur-3xl animate-float" style={{ animationDelay: "2.4s" }} />
       </div>
 
       {/* Photo/Video Collage Grid */}
       {!showInvite && (
         <div className="absolute inset-0 p-4 sm:p-6 md:p-8">
-          <div className="grid grid-cols-2 grid-rows-6 md:grid-cols-4 md:grid-rows-3 gap-1 sm:gap-2 md:gap-4 h-full overflow-visible">
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 md:grid-rows-3 gap-1 sm:gap-2 md:gap-4 h-full overflow-visible">
             {shuffledItems.map((item, index) => (
               <div
                 key={item.id}
-                className={`relative transition-all duration-500 ${
+                className={`relative transition-all duration-500 will-change-transform ${
                   index <= currentPhotoIndex ? "opacity-100" : "opacity-0"
-                } -m-1 md:-m-2`}
+                } -m-0.5 sm:-m-1 md:-m-2`}
                 style={{
                   zIndex: 10 + index,
-                  transform: `rotate(${index % 3 === 0 ? 0 : ((index * 7) % 15) - 7}deg) scale(${index <= currentPhotoIndex ? 1.06 + ((index % 4) * 0.01) : 0.96})`,
+                  transform: `rotate(${index % 3 === 0 ? 0 : ((index * 6) % 12) - 6}deg) scale(${index <= currentPhotoIndex ? 1.04 + ((index % 4) * 0.01) : 0.98})`,
                 }}
               >
-                <Card className="h-full bg-white/10 backdrop-blur-sm border-2 border-blue-400/30 shadow-xl overflow-hidden flex items-center justify-center p-0">
-                  {item.type === "video" ? (
-                    <video className="w-full h-full object-contain rounded-none bg-black/20" autoPlay muted loop playsInline>
-                      <source src={item.src} type="video/mp4" />
-                      <div className="w-full h-full bg-purple-200 flex items-center justify-center">
-                        <div className="text-center text-purple-800">
-                          <div className="text-4xl mb-2">🎥</div>
-                          <p className="text-sm font-medium">Video {item.id}</p>
+                <div className="relative w-full pb-[140%] sm:pb-[130%] md:pb-[130%] md:h-auto lg:pb-[120%]">
+                  <Card className="absolute inset-0 h-full overflow-hidden p-0 rounded-xl">
+                    {item.type === "video" ? (
+                      <video className="w-full h-full object-cover object-[center_25%] rounded-xl" autoPlay muted loop playsInline>
+                        <source src={item.src} type="video/mp4" />
+                        <div className="w-full h-full bg-purple-200 flex items-center justify-center">
+                          <div className="text-center text-purple-800">
+                            <div className="text-4xl mb-2">🎥</div>
+                            <p className="text-sm font-medium">Video {item.id}</p>
+                          </div>
                         </div>
-                      </div>
-                    </video>
-                  ) : (
-                    <>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={item.src || "/placeholder.svg"}
-                        alt={item.alt}
-                        className="w-full h-full object-contain rounded-none bg-black/10"
-                      />
-                    </>
-                  )}
-                </Card>
+                      </video>
+                    ) : (
+                      <>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={item.src || "/placeholder.svg"}
+                          alt={item.alt}
+                          className="w-full h-full object-cover object-[center_25%] rounded-xl"
+                        />
+                      </>
+                    )}
+                  </Card>
+                </div>
               </div>
             ))}
           </div>
@@ -145,13 +123,14 @@ export default function BirthdayInvite() {
       {showAnimatedText && !showInvite && (
         <div className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none">
           <div className="bg-white/85 rounded-3xl px-6 py-6 sm:px-8 sm:py-8 md:px-10 md:py-8 shadow-2xl">
-            <div className="text-center space-y-8">
-                              <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold text-transparent bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text animate-pulse text-shadow-glow-blue">
+            <div className="text-center space-y-6">
+              <Badge variant="secondary" className="rounded-full px-4 py-1.5 text-xs tracking-wide uppercase">
                 You&apos;re Invited To
-                </h1>
-              <h2 className="text-5xl sm:text-7xl md:text-9xl font-bold text-transparent bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text animate-bounce text-shadow-glow-purple">
+              </Badge>
+              <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold text-transparent bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text animate-pulse">
                 Celebrate 48
-              </h2>
+              </h1>
+              <p className="text-base sm:text-lg text-slate-700">Music, Drinks & Memories</p>
             </div>
           </div>
         </div>
@@ -159,21 +138,15 @@ export default function BirthdayInvite() {
 
       {showPause && !showInvite && (
         <div className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none">
-          <div className="text-center space-y-6 bg-black/80 backdrop-blur-sm rounded-3xl p-6 sm:p-8 md:p-12">
-            <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold text-transparent bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text animate-pulse">
+          <div className="text-center space-y-6 bg-black/70 backdrop-blur-md rounded-3xl p-6 sm:p-8 md:p-12 border border-white/10">
+            <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold text-transparent bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text">
               Get Ready! 🎉
             </h1>
-            <div className="flex justify-center space-x-4 text-3xl sm:text-4xl">
-              <span className="animate-bounce">🎵</span>
-              <span className="animate-bounce" style={{ animationDelay: "0.2s" }}>
-                🍷
-              </span>
-              <span className="animate-bounce" style={{ animationDelay: "0.4s" }}>
-                🎂
-              </span>
-              <span className="animate-bounce" style={{ animationDelay: "0.6s" }}>
-                🎉
-              </span>
+            <div className="flex justify-center gap-3 sm:gap-4 text-3xl sm:text-4xl opacity-90">
+              <span className="animate-gentle-bounce">🎵</span>
+              <span className="animate-gentle-bounce" style={{ animationDelay: "0.2s" }}>🍷</span>
+              <span className="animate-gentle-bounce" style={{ animationDelay: "0.4s" }}>🎂</span>
+              <span className="animate-gentle-bounce" style={{ animationDelay: "0.6s" }}>🎉</span>
             </div>
           </div>
         </div>
@@ -197,7 +170,7 @@ export default function BirthdayInvite() {
 
             <div className="relative z-10 text-center space-y-8">
               {/* Decorative elements */}
-              <div className="flex justify-center space-x-6 text-3xl sm:text-4xl md:text-5xl">
+              <div className="flex justify-center space-x-6 text-3xl sm:text-4xl md:text-5xl opacity-90">
                 <span className="animate-bounce">🎉</span>
                 <span className="animate-bounce delay-100">🎂</span>
                 <span className="animate-bounce delay-200">🎵</span>
@@ -210,7 +183,7 @@ export default function BirthdayInvite() {
                 <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold text-transparent bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-balance animate-pulse">
                   Celebrate 48
                 </h1>
-                <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold text-black text-balance animate-bounce bg-gradient-to-r from-purple-500/15 to-blue-500/15 rounded-full py-4 px-8">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold text-black text-balance bg-gradient-to-r from-purple-500/10 to-blue-500/10 rounded-full py-3 px-6">
                   Sarah Beth&apos;s Birthday Bash
                 </h2>
                 <p className="text-lg sm:text-xl md:text-2xl text-blue-400 italic">Music, Drinks & Memories! 🎵🍷</p>
