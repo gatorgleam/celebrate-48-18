@@ -10,6 +10,8 @@ export default function BirthdayInvite() {
   const [showAnimatedText, setShowAnimatedText] = useState(false)
   const [showPause, setShowPause] = useState(false)
   const [showInvite, setShowInvite] = useState(false)
+  const [showPhotos, setShowPhotos] = useState(true)
+  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0)
 
   // 12 items total: 9 photos + 3 videos (randomly placed)
   const mediaItems = [
@@ -25,6 +27,18 @@ export default function BirthdayInvite() {
     { id: 10, type: "video", src: "/videos/mom-video-3.mp4", alt: "Sarah Beth video 3" },
     { id: 11, type: "photo", src: "/photos/mom-photo-8.jpg", alt: "Sarah Beth memory 8" },
     { id: 12, type: "photo", src: "/photos/mom-photo-9.jpg", alt: "Sarah Beth memory 9" },
+  ]
+
+  const placeholderPhotos = [
+    { id: 1, src: "/photos/placeholder-1.jpg" },
+    { id: 2, src: "/photos/placeholder-2.jpg" },
+    { id: 3, src: "/photos/placeholder-3.jpg" },
+    { id: 4, src: "/photos/placeholder-4.jpg" },
+    { id: 5, src: "/photos/placeholder-5.jpg" },
+    { id: 6, src: "/photos/placeholder-6.jpg" },
+    { id: 7, src: "/photos/placeholder-7.jpg" },
+    { id: 8, src: "/photos/placeholder-8.jpg" },
+    { id: 9, src: "/photos/placeholder-9.jpg" },
   ]
 
   useEffect(() => {
@@ -50,12 +64,31 @@ export default function BirthdayInvite() {
 
       return () => clearInterval(timer)
     }
-  }, [showCollage, mediaItems.length])
+
+    if (showPhotos) {
+      const photoTimer = setInterval(() => {
+        setCurrentPhotoIndex((prev) => {
+          if (prev < placeholderPhotos.length - 1) {
+            return prev + 1
+          } else {
+            // All photos shown, show invite
+            setTimeout(() => {
+              setShowPhotos(false)
+              setShowInvite(true)
+            }, 3000) // 3 second pause
+            return prev
+          }
+        })
+      }, 1000) // Slower animation - 1000ms per photo
+
+      return () => clearInterval(photoTimer)
+    }
+  }, [showCollage, showPhotos, mediaItems.length, placeholderPhotos.length])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-blue-900 overflow-hidden relative">
+      {/* Floating drink and music emojis */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Floating drink and music emojis */}
         <div className="absolute top-10 left-10 text-4xl opacity-30 animate-float">🍷</div>
         <div className="absolute top-20 right-20 text-3xl opacity-25 animate-float delay-1000">🎵</div>
         <div className="absolute bottom-20 left-20 text-3xl opacity-20 animate-float delay-2000">🥂</div>
@@ -67,6 +100,17 @@ export default function BirthdayInvite() {
         <div className="absolute top-3/4 right-1/4 w-3 h-3 bg-purple-300 rounded-full animate-pulse delay-1000 opacity-50"></div>
         <div className="absolute bottom-1/3 left-1/3 w-1 h-1 bg-white rounded-full animate-pulse delay-2000 opacity-70"></div>
       </div>
+
+      {/* Elegant overlay with subtle pattern and gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-black/20 via-purple-500/10 to-blue-500/20"></div>
+      <div
+        className="absolute inset-0 opacity-5"
+        style={{
+          backgroundImage: `radial-gradient(circle at 25% 25%, white 2px, transparent 2px),
+                         radial-gradient(circle at 75% 75%, white 2px, transparent 2px)`,
+          backgroundSize: "50px 50px",
+        }}
+      ></div>
 
       {/* Fast Photo/Video Collage */}
       {showCollage && (
@@ -138,89 +182,121 @@ export default function BirthdayInvite() {
         </div>
       )}
 
-      {showInvite && (
-        <div className="absolute inset-0 flex items-center justify-center animate-fade-in p-4">
-          <div className="relative max-w-4xl w-full">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-600/20 rounded-3xl blur-2xl animate-pulse"></div>
-
-            <Card className="relative p-12 bg-gradient-to-br from-white/95 to-white/90 border-2 border-white/30 shadow-2xl backdrop-blur-xl rounded-3xl overflow-hidden">
-              <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-transparent rounded-br-full"></div>
-              <div className="absolute bottom-0 right-0 w-32 h-32 bg-gradient-to-tl from-purple-400/20 to-transparent rounded-tl-full"></div>
-
-              <div className="relative text-center space-y-8">
-                <div className="flex justify-center space-x-6 text-5xl mb-8">
-                  <span className="animate-bounce text-blue-500">🎉</span>
-                  <span className="animate-bounce delay-100 text-purple-500">🎂</span>
-                  <span className="animate-bounce delay-200 text-blue-600">🎵</span>
-                  <span className="animate-bounce delay-300 text-purple-600">🍷</span>
-                  <span className="animate-bounce delay-400 text-blue-500">🎉</span>
-                </div>
-
-                <div className="space-y-4">
-                  <h1 className="text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 animate-pulse font-serif leading-tight">
-                    Celebrate 48
-                  </h1>
-                  <h2 className="text-5xl font-bold text-gray-800 animate-bounce bg-gradient-to-r from-purple-100 to-blue-100 px-8 py-4 rounded-2xl shadow-lg font-serif">
-                    Sarah Beth's Birthday Bash
-                  </h2>
-                  <p className="text-2xl text-purple-700 italic font-medium">Music, Drinks & Memories! 🎶🍾</p>
-                </div>
-
-                <div className="grid md:grid-cols-3 gap-6 text-xl">
-                  <Card className="p-6 bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-200 shadow-xl rounded-2xl transform hover:scale-105 transition-all duration-300">
-                    <div className="text-center space-y-3">
-                      <div className="text-4xl">📅</div>
-                      <h3 className="text-2xl font-bold text-blue-700">When</h3>
-                      <p className="text-xl font-semibold text-gray-800">Friday, September 26th</p>
-                      <p className="text-xl font-semibold text-gray-800">7:00 PM</p>
-                    </div>
-                  </Card>
-
-                  <Card className="p-6 bg-gradient-to-br from-purple-50 to-blue-50 border-2 border-purple-200 shadow-xl rounded-2xl transform hover:scale-105 transition-all duration-300">
-                    <div className="text-center space-y-3">
-                      <div className="text-4xl">🎵</div>
-                      <h3 className="text-2xl font-bold text-purple-700">Where</h3>
-                      <p className="text-xl font-semibold text-gray-800">Lake Geneva</p>
-                      <p className="text-xl font-semibold text-gray-800">House of Music</p>
-                    </div>
-                  </Card>
-
-                  <Card className="p-6 bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-200 shadow-xl rounded-2xl transform hover:scale-105 transition-all duration-300">
-                    <div className="text-center space-y-3">
-                      <div className="text-4xl">📞</div>
-                      <h3 className="text-2xl font-bold text-blue-700">RSVP</h3>
-                      <p className="text-xl font-semibold text-gray-800">Call or text Abby</p>
-                      <p className="text-xl font-mono font-bold text-purple-700">(262) 210-2921</p>
-                    </div>
-                  </Card>
-                </div>
-
-                <div className="pt-6">
-                  <Button
-                    size="lg"
-                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold px-12 py-6 text-2xl rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-300 border-2 border-white/20"
-                    onClick={() => window.open("tel:+12622102921")}
-                  >
-                    RSVP Now! 🎉✨
-                  </Button>
-                </div>
-
-                <div className="pt-8 space-y-4">
-                  <div className="flex justify-center space-x-4 text-3xl">
-                    <span className="animate-pulse">🎈</span>
-                    <span className="animate-pulse delay-500">✨</span>
-                    <span className="animate-pulse delay-1000">🎈</span>
+      {/* Scrapbook Photo Animation */}
+      {showPhotos && (
+        <div className="absolute inset-0 flex items-center justify-center z-10">
+          {placeholderPhotos.map((photo, index) => (
+            <div
+              key={photo.id}
+              className={`absolute transition-all duration-1000 transform ${
+                index <= currentPhotoIndex ? "opacity-100 scale-100" : "opacity-0 scale-95"
+              } ${
+                index < currentPhotoIndex
+                  ? "animate-fade-out-up"
+                  : index === currentPhotoIndex
+                    ? "animate-bounce-in"
+                    : ""
+              }`}
+              style={{
+                transform: `rotate(${(index - 2) * 5}deg) translate(${(index - 2) * 20}px, ${(index - 2) * 10}px)`,
+                zIndex: placeholderPhotos.length - index,
+              }}
+            >
+              <Card className="p-4 bg-white/95 backdrop-blur-sm border-2 border-purple-200 shadow-xl">
+                <div className="w-64 h-64 bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg flex items-center justify-center border-2 border-dashed border-purple-300">
+                  <div className="text-center text-purple-600">
+                    <div className="text-4xl mb-2">📸</div>
+                    <p className="text-sm font-medium">Photo Placeholder {photo.id}</p>
+                    <p className="text-xs mt-1">Replace with Sarah Beth's photo</p>
                   </div>
-                  <p className="text-xl text-purple-700 italic font-medium bg-gradient-to-r from-blue-100 to-purple-100 px-6 py-3 rounded-xl">
-                    {"Let's make this birthday absolutely magical! 🌟"}
-                  </p>
                 </div>
-              </div>
-            </Card>
-          </div>
+                <div className="mt-2 text-center">
+                  <div className="w-16 h-4 bg-purple-200 rounded-full mx-auto opacity-60"></div>
+                </div>
+              </Card>
+            </div>
+          ))}
         </div>
       )}
 
+      {/* Main Invitation */}
+      {showInvite && (
+        <div className="absolute inset-0 flex items-center justify-center animate-fade-in z-10">
+          <Card className="max-w-2xl mx-4 p-8 bg-white/95 backdrop-blur-md border-2 border-purple-300 shadow-2xl transform rotate-1">
+            <div className="relative text-center space-y-8">
+              <div className="flex justify-center space-x-6 text-5xl mb-8">
+                <span className="animate-bounce text-blue-500">🎉</span>
+                <span className="animate-bounce delay-100 text-purple-500">🎂</span>
+                <span className="animate-bounce delay-200 text-blue-600">🎵</span>
+                <span className="animate-bounce delay-300 text-purple-600">🍷</span>
+                <span className="animate-bounce delay-400 text-blue-500">🎉</span>
+              </div>
+
+              <div className="space-y-4">
+                <h1 className="text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 animate-pulse font-serif leading-tight">
+                  Celebrate 48
+                </h1>
+                <h2 className="text-5xl font-bold text-gray-800 animate-bounce bg-gradient-to-r from-purple-100 to-blue-100 px-8 py-4 rounded-2xl shadow-lg font-serif">
+                  Sarah Beth's Birthday Bash
+                </h2>
+                <p className="text-2xl text-purple-700 italic font-medium">Music, Drinks & Memories! 🎶🍾</p>
+              </div>
+
+              <div className="grid md:grid-cols-3 gap-6 text-xl">
+                <Card className="p-6 bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-200 shadow-xl rounded-2xl transform hover:scale-105 transition-all duration-300">
+                  <div className="text-center space-y-3">
+                    <div className="text-4xl">📅</div>
+                    <h3 className="text-2xl font-bold text-blue-700">When</h3>
+                    <p className="text-xl font-semibold text-gray-800">Friday, September 26th</p>
+                    <p className="text-xl font-semibold text-gray-800">7:00 PM</p>
+                  </div>
+                </Card>
+
+                <Card className="p-6 bg-gradient-to-br from-purple-50 to-blue-50 border-2 border-purple-200 shadow-xl rounded-2xl transform hover:scale-105 transition-all duration-300">
+                  <div className="text-center space-y-3">
+                    <div className="text-4xl">🎵</div>
+                    <h3 className="text-2xl font-bold text-purple-700">Where</h3>
+                    <p className="text-xl font-semibold text-gray-800">Lake Geneva</p>
+                    <p className="text-xl font-semibold text-gray-800">House of Music</p>
+                  </div>
+                </Card>
+
+                <Card className="p-6 bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-200 shadow-xl rounded-2xl transform hover:scale-105 transition-all duration-300">
+                  <div className="text-center space-y-3">
+                    <div className="text-4xl">📞</div>
+                    <h3 className="text-2xl font-bold text-blue-700">RSVP</h3>
+                    <p className="text-xl font-semibold text-gray-800">Call or text Abby</p>
+                    <p className="text-xl font-mono font-bold text-purple-700">(262) 210-2921</p>
+                  </div>
+                </Card>
+              </div>
+
+              <div className="pt-6">
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold px-12 py-6 text-2xl rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-300 border-2 border-white/20"
+                  onClick={() => window.open("tel:+12622102921")}
+                >
+                  RSVP Now! 🎉✨
+                </Button>
+              </div>
+
+              <div className="pt-8 space-y-4">
+                <div className="flex justify-center space-x-4 text-3xl">
+                  <span className="animate-pulse">🎈</span>
+                  <span className="animate-pulse delay-500">✨</span>
+                  <span className="animate-pulse delay-1000">🎈</span>
+                </div>
+                <p className="text-xl text-purple-700 italic font-medium bg-gradient-to-r from-blue-100 to-purple-100 px-6 py-3 rounded-xl">
+                  {"Let's make this birthday absolutely magical! 🌟"}
+                </p>
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* Skip animation button */}
       {showCollage && (
         <Button
           variant="outline"
@@ -232,6 +308,20 @@ export default function BirthdayInvite() {
           }}
         >
           Skip Animation ⏭️
+        </Button>
+      )}
+
+      {showPhotos && (
+        <Button
+          variant="outline"
+          size="sm"
+          className="absolute bottom-4 right-4 bg-white/80 backdrop-blur-sm border-purple-200 text-purple-700 hover:bg-purple-50 z-20"
+          onClick={() => {
+            setShowPhotos(false)
+            setShowInvite(true)
+          }}
+        >
+          Skip Animation
         </Button>
       )}
     </div>
