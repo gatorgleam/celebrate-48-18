@@ -13,17 +13,17 @@ export default function BirthdayInvite() {
 
   const mediaItems = useMemo(() => [
     { id: 1, type: "image", src: "/photos/mom-1.jpg", alt: "Sarah Beth memory 1" },
-    { id: 2, type: "video", src: "/videos/mom-video-1.mp4", alt: "Sarah Beth video 1" },
-    { id: 3, type: "image", src: "/photos/mom-2.jpg", alt: "Sarah Beth memory 2" },
-    { id: 4, type: "image", src: "/photos/mom-3.jpg", alt: "Sarah Beth memory 3" },
-    { id: 5, type: "video", src: "/videos/mom-video-2.mp4", alt: "Sarah Beth video 2" },
-    { id: 6, type: "image", src: "/photos/mom-4.jpg", alt: "Sarah Beth memory 4" },
-    { id: 7, type: "image", src: "/photos/mom-5.jpg", alt: "Sarah Beth memory 5" },
-    { id: 8, type: "image", src: "/photos/mom-6.jpg", alt: "Sarah Beth memory 6" },
-    { id: 9, type: "video", src: "/videos/mom-video-3.mp4", alt: "Sarah Beth video 3" },
-    { id: 10, type: "image", src: "/photos/mom-7.jpg", alt: "Sarah Beth memory 7" },
-    { id: 11, type: "image", src: "/photos/mom-8.jpg", alt: "Sarah Beth memory 8" },
-    { id: 12, type: "image", src: "/photos/mom-9.jpg", alt: "Sarah Beth memory 9" },
+    { id: 2, type: "image", src: "/photos/mom-2.jpg", alt: "Sarah Beth memory 2" },
+    { id: 3, type: "image", src: "/photos/mom-3.jpg", alt: "Sarah Beth memory 3" },
+    { id: 4, type: "video", src: "/videos/mom-video-1.mp4", alt: "Sarah Beth video 1", poster: "/placeholder.jpg" },
+    { id: 5, type: "image", src: "/photos/mom-4.jpg", alt: "Sarah Beth memory 4" },
+    { id: 6, type: "image", src: "/photos/mom-5.jpg", alt: "Sarah Beth memory 5" },
+    { id: 7, type: "image", src: "/photos/mom-6.jpg", alt: "Sarah Beth memory 6" },
+    { id: 8, type: "video", src: "/videos/mom-video-2.mp4", alt: "Sarah Beth video 2", poster: "/placeholder.jpg" },
+    { id: 9, type: "image", src: "/photos/mom-7.jpg", alt: "Sarah Beth memory 7" },
+    { id: 10, type: "image", src: "/photos/mom-8.jpg", alt: "Sarah Beth memory 8" },
+    { id: 11, type: "image", src: "/photos/mom-9.jpg", alt: "Sarah Beth memory 9" },
+    { id: 12, type: "video", src: "/videos/mom-video-3.mp4", alt: "Sarah Beth video 3", poster: "/placeholder.jpg" },
   ], [])
 
   // Shuffle media once on mount so the collage order varies per load
@@ -32,6 +32,8 @@ export default function BirthdayInvite() {
     const shuffled = [...mediaItems].sort(() => Math.random() - 0.5)
     setShuffledItems(shuffled)
   }, [mediaItems])
+
+
 
   useEffect(() => {
     const photoTimer = setInterval(() => {
@@ -78,43 +80,82 @@ export default function BirthdayInvite() {
       {!showInvite && (
         <div className="absolute inset-0 p-4 sm:p-6 md:p-8">
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 md:grid-rows-3 gap-1 sm:gap-2 md:gap-4 h-full overflow-visible">
-            {shuffledItems.map((item, index) => (
-              <div
-                key={item.id}
-                className={`relative transition-all duration-500 will-change-transform ${
-                  index <= currentPhotoIndex ? "opacity-100" : "opacity-0"
-                } -m-0.5 sm:-m-1 md:-m-2`}
-                style={{
-                  zIndex: 10 + index,
-                  transform: `rotate(${index % 3 === 0 ? 0 : ((index * 6) % 12) - 6}deg) scale(${index <= currentPhotoIndex ? 1.04 + ((index % 4) * 0.01) : 0.98})`,
-                }}
-              >
-                <div className="relative w-full pb-[140%] sm:pb-[130%] md:pb-[130%] md:h-auto lg:pb-[120%]">
-                  <Card className="absolute inset-0 h-full overflow-hidden p-0 rounded-xl">
-                    {item.type === "video" ? (
-                      <video className="w-full h-full object-cover object-[center_25%] rounded-xl" autoPlay muted loop playsInline>
-                        <source src={item.src} type="video/mp4" />
-                        <div className="w-full h-full bg-purple-200 flex items-center justify-center">
-                          <div className="text-center text-purple-800">
-                            <div className="text-4xl mb-2">🎥</div>
-                            <p className="text-sm font-medium">Video {item.id}</p>
-                          </div>
-                        </div>
-                      </video>
-                    ) : (
-                      <>
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={item.src || "/placeholder.svg"}
-                          alt={item.alt}
-                          className="w-full h-full object-cover object-[center_25%] rounded-xl"
-                        />
-                      </>
-                    )}
-                  </Card>
+            {shuffledItems.map((item, index) => {
+              const isVisible = index <= currentPhotoIndex;
+              
+              return (
+                <div
+                  key={item.id}
+                  className={`relative transition-all duration-500 will-change-transform ${
+                    isVisible ? "opacity-100" : "opacity-0"
+                  } -m-0.5 sm:-m-1 md:-m-2`}
+                  style={{
+                    zIndex: 10 + index,
+                    transform: `rotate(${index % 3 === 0 ? 0 : ((index * 6) % 12) - 6}deg) scale(${isVisible ? 1.04 + ((index % 4) * 0.01) : 0.98})`,
+                  }}
+                >
+                  <div className="relative w-full pb-[140%] sm:pb-[130%] md:pb-[130%] md:h-auto lg:pb-[120%]">
+                    <Card className="absolute inset-0 h-full overflow-hidden p-0 rounded-xl">
+                      {item.type === "video" ? (
+                        <video 
+                          className="w-full h-full object-cover object-[center_25%] rounded-xl bg-gray-100 border-2 border-blue-400/50" 
+                          autoPlay={true}
+                          muted 
+                          loop 
+                          playsInline
+                          preload="auto"
+                          poster={item.poster}
+                          controls={false}
+                          disablePictureInPicture
+                          onLoadedData={(e) => {
+                            const video = e.target as HTMLVideoElement;
+                            video.play().catch(() => {
+                              // Fallback if autoplay fails
+                            });
+                          }}
+                          onCanPlay={(e) => {
+                            const video = e.target as HTMLVideoElement;
+                            video.play().catch(() => {
+                              // Fallback if autoplay fails
+                            });
+                          }}
+                          onError={(e) => {
+                            console.log('Video error for:', item.src);
+                            // Show poster image on error
+                            const video = e.target as HTMLVideoElement;
+                            video.style.display = 'none';
+                            const img = document.createElement('img');
+                            img.src = item.poster || '/placeholder.jpg';
+                            img.className = 'w-full h-full object-cover object-[center_25%] rounded-xl';
+                            img.alt = item.alt;
+                            video.parentNode?.appendChild(img);
+                          }}
+                        >
+                          <source src={item.src} type="video/mp4" />
+                          Your browser does not support the video tag.
+                        </video>
+                      ) : (
+                        <>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={item.src}
+                            alt={item.alt}
+                            loading="eager"
+                            decoding="async"
+                            className="w-full h-full object-cover object-[center_25%] rounded-xl bg-gray-100"
+                            onError={(e) => {
+                              console.log('Image error for:', item.src);
+                              const img = e.target as HTMLImageElement;
+                              img.src = '/placeholder.jpg';
+                            }}
+                          />
+                        </>
+                      )}
+                    </Card>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
@@ -164,7 +205,17 @@ export default function BirthdayInvite() {
               muted
               loop
               playsInline
+              preload="none"
+              poster="/placeholder.jpg"
+              controls={false}
+              disablePictureInPicture
               aria-hidden
+              onLoadedData={(e) => {
+                const video = e.target as HTMLVideoElement;
+                video.play().catch(() => {
+                  // Fallback if autoplay fails
+                });
+              }}
             />
             <div className="absolute inset-0 bg-white/85" />
 
